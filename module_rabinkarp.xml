@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_rabinkarp" default="compile.module.rabinkarp">
+  <dirname property="module.rabinkarp.basedir" file="${ant.file.module_rabinkarp}"/>
+  
+  <property name="module.jdk.home.rabinkarp" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.rabinkarp" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.rabinkarp" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.rabinkarp" value="-encoding UTF-8 -source 10 -target 10 ${compiler.args}"/>
+  
+  <property name="rabinkarp.output.dir" value="${module.rabinkarp.basedir}/out/production/RabinKarp"/>
+  <property name="rabinkarp.testoutput.dir" value="${module.rabinkarp.basedir}/out/test/RabinKarp"/>
+  
+  <path id="rabinkarp.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="rabinkarp.module.production.classpath">
+    <path refid="${module.jdk.classpath.rabinkarp}"/>
+  </path>
+  
+  <path id="rabinkarp.runtime.production.module.classpath">
+    <pathelement location="${rabinkarp.output.dir}"/>
+  </path>
+  
+  <path id="rabinkarp.module.classpath">
+    <path refid="${module.jdk.classpath.rabinkarp}"/>
+    <pathelement location="${rabinkarp.output.dir}"/>
+  </path>
+  
+  <path id="rabinkarp.runtime.module.classpath">
+    <pathelement location="${rabinkarp.testoutput.dir}"/>
+    <pathelement location="${rabinkarp.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.rabinkarp">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.rabinkarp">
+    <patternset refid="excluded.from.module.rabinkarp"/>
+  </patternset>
+  
+  <path id="rabinkarp.module.sourcepath">
+    <dirset dir="${module.rabinkarp.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.rabinkarp" depends="compile.module.rabinkarp.production,compile.module.rabinkarp.tests" description="Compile module RabinKarp"/>
+  
+  <target name="compile.module.rabinkarp.production" depends="register.custom.compilers" description="Compile module RabinKarp; production classes">
+    <mkdir dir="${rabinkarp.output.dir}"/>
+    <javac2 destdir="${rabinkarp.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.rabinkarp}/javac">
+      <compilerarg line="${compiler.args.rabinkarp}"/>
+      <bootclasspath refid="rabinkarp.module.bootclasspath"/>
+      <classpath refid="rabinkarp.module.production.classpath"/>
+      <src refid="rabinkarp.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.rabinkarp"/>
+    </javac2>
+    
+    <copy todir="${rabinkarp.output.dir}">
+      <fileset dir="${module.rabinkarp.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.rabinkarp.tests" depends="register.custom.compilers,compile.module.rabinkarp.production" description="compile module RabinKarp; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.rabinkarp" description="cleanup module">
+    <delete dir="${rabinkarp.output.dir}"/>
+    <delete dir="${rabinkarp.testoutput.dir}"/>
+  </target>
+</project>
